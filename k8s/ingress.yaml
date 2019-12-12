@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: bar-alod-ch
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: bar-alod-ch.zazukoians.org
+spec:
+  rules:
+  - host: bar.alod.ch
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: varnish
+          servicePort: 80
