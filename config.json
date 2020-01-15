@@ -1,7 +1,7 @@
 {
   "baseConfig": "trifid:config-sparql.json",
   "datasetBaseUrl": "http://data.alod.ch/",
-  "sparqlEndpointUrl": "https://stardog.cluster.ldbar.ch/lindas/query",
+  "sparqlEndpointUrl": "https://stardog.cluster.ldbar.ch/alod/query",
   "sparqlEndpointAuthentication": {
     "user": "public",
     "password": "public"
