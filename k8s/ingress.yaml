@@ -4,7 +4,14 @@ metadata:
   name: bar-alod-ch
   annotations:
     external-dns.alpha.kubernetes.io/hostname: bar-alod-ch.zazukoians.org
+    kubernetes.io/tls-acme: "true"
+    traefik.ingress.kubernetes.io/redirect-regex: "^https://(.*)"
+    traefik.ingress.kubernetes.io/redirect-replacement: "http://$1"
 spec:
+  tls:
+  - secretName: bar-alod-ch-cert
+    hosts:
+    - bar.alod.ch
   rules:
   - host: bar.alod.ch
     http:
