@@ -9,14 +9,14 @@ metadata:
     traefik.ingress.kubernetes.io/redirect-replacement: "http://$1"
 spec:
   tls:
-  - secretName: bar-alod-ch-cert
-    hosts:
-    - bar.alod.ch
+    - secretName: bar-alod-ch-cert
+      hosts:
+        - bar.alod.ch
   rules:
-  - host: bar.alod.ch
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: varnish
-          servicePort: 80
+    - host: bar.alod.ch
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: varnish
+              servicePort: 80
