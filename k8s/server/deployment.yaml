@@ -27,6 +27,14 @@ spec:
               path: /
               port: http
 
+          resources:
+            requests:
+              cpu: 50m
+              memory: 80Mi
+            limits:
+              cpu: 300m
+              memory: 150Mi
+
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
