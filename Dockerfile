@@ -1,27 +1,35 @@
-# First step
-FROM node:lts AS builder
+FROM node:12 as builder
 
-WORKDIR /src
-ADD package.json package-lock.json ./
-RUN npm ci
+# Add tini to act as PID1 for proper signal handling
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
 
-# Second step
-FROM node:lts-alpine
-
-RUN mkdir -p /app
+# Build the app
 WORKDIR /app
-COPY --from=builder /src/node_modules/ ./node_modules
-ADD . /app
+COPY package.json package-lock.json ./
+ENV NODE_ENV production
+RUN npm ci
+COPY . .
 
-ENV HOST 0.0.0.0
-USER nobody:nobody
+# Build runtime
+FROM gcr.io/distroless/nodejs:12 as runtime
 
-ENTRYPOINT []
+# Add tini from build stage
+COPY --from=builder /tini /tini
+ENTRYPOINT ["/tini", "--", "/nodejs/bin/node"]
 
-# Using npm scripts for running the app allows two things:
-#  - Handle signals correctly (Node does not like to be PID1)
-#  - Let Skaffold detect it's a node app so it can attach the Node debugger
-CMD ["npm", "run", "start"]
+# Copy the app from build stage
+COPY --from=builder /app /app
+WORKDIR /app
 
+ENV NODE_ENV production
+ENV DEBUG trifid:*
+
+# Run as non-privileged, user "nobody"
+USER 65534
+
+# Expose the HTTP service under the unprivileged (>1024) http-alt port
 EXPOSE 8080
-HEALTHCHECK CMD wget -q -O- http://localhost:8080/health
+
+CMD ["./node_modules/.bin/trifid", "--config", "config.json"]
